@@ -111,20 +111,8 @@ function queryDocument(options) {
     var query = {};
 
     if ("overview" in options) {
-        /*
-           TODO: Write an assignment statement to ensure that if "overview" appears in the 
-           options object, we will match documents that have the value of options.overview 
-           in either the "overview" field or "tag_list" field of companies documents.
-
-           You will need to use the $or operator to do this. As a hint, "$or" should be the
-           name of the field you create in the query object.
-
-           As with the example for options.milestones below, please ensure your regular
-           expression matches are case insensitive.
-
-           I urge you to test your query in the Mongo shell first and adapt it to fit
-           the syntax for constructing query documents in this application.
-        */
+        query["$or"] = [{"tag_list": {$regex: options.overview, $options: "i"}}, 
+        {"overview": {$regex: options.overview, $options: "i"}}]
     }
 
     if ("milestones" in options) {
