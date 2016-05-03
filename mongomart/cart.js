@@ -170,17 +170,31 @@ function CartDAO(database) {
         *
         */
 
-        var userCart = {
-            userId: userId,
-            items: []
+        if(quantity == 0)
+        {
+            console.log("*********REMOVE********");
+            this.db.collection('cart').findOneAndUpdate(
+                {"userId": userId},
+                {$pull: {items: {_id: itemId}}},
+                {returnOriginal: false},
+                function(err, userCart){
+                    callback(userCart.value);
+                });
         }
-        var dummyItem = this.createDummyItem();
-        dummyItem.quantity = quantity;
-        userCart.items.push(dummyItem);
-        callback(userCart);
-
-        // TODO-lab7 Replace all code above (in this method).
-
+        //update quantity
+        else
+        {
+            console.log("*********QUANTITY********");
+            this.db.collection('cart').findOneAndUpdate(
+                {"userId": userId, "items._id": itemId},
+                {$set: {"items.$.quantity": quantity}},
+                {returnOriginal: false},
+                function(err, userCart){
+                    console.log("*********USERCART********");
+                    console.log(userCart.value);
+                    callback(userCart.value);
+                });
+        }
     }
 
     this.createDummyItem = function() {
