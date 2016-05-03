@@ -71,10 +71,16 @@ function CartDAO(database) {
          * how cart.itemInCart is used in the mongomart.js app.
          *
          */
-
-        callback(null);
-
-        // TODO-lab6 Replace all code above (in this method).
+        this.db.collection('cart').findOne({"userId": userId, "items._id": itemId}, {"items.$": 1}, function(err, result){
+            if(result != null)
+            {
+                result = result.items[0];
+                console.log("***********************");
+                console.log(result);
+                console.log("***********************");
+            }
+            callback(result);
+        });
     }
 
 
