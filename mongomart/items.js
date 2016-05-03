@@ -134,8 +134,8 @@ function ItemDAO(database) {
         else
             cursor = this.db.collection('item').find({"category": category});
         cursor.count(function(err, numItems){
-                callback(numItems);
-            });
+            callback(numItems);
+        });
     }
 
 
@@ -165,19 +165,11 @@ function ItemDAO(database) {
          * description. You should simply do this in the mongo shell.
          *
          */
-
-        var item = this.createDummyItem();
-        var items = [];
-        for (var i=0; i<5; i++) {
-            items.push(item);
-        }
-
-        // TODO-lab2A Replace all code above (in this method).
-
-        // TODO Include the following line in the appropriate
-        // place within your code to pass the items for the selected page
-        // of search results to the callback.
-        callback(items);
+        this.db.collection('item').find({$text: {$search: query}})
+            .sort({"_id": 1}).skip(itemsPerPage*(page)).limit(itemsPerPage)
+            .toArray(function(err, items){
+                callback(items);
+            });
     }
 
 
@@ -198,8 +190,10 @@ function ItemDAO(database) {
         * a SINGLE text index on title, slogan, and description. You should
         * simply do this in the mongo shell.
         */
-
-        callback(numItems);
+        this.db.collection('item').find({$text: {$search: query}})
+            .count(function(err,numItems){
+                callback(numItems);
+            });
     }
 
 
